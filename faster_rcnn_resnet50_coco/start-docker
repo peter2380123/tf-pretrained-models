@@ -4,7 +4,7 @@
 echo "Commencing docker build..."
 
 # Change the model_url to relative Tensorflow pretrained model you wish to use
-docker build -t ssd-resnet-50-fpn-coco . --build-arg model_url=http://download.tensorflow.org/models/object_detection/ssd_resnet50_v1_fpn_shared_box_predictor_640x640_coco14_sync_2018_07_03.tar.gz
+docker build -t faster-rcnn-resnet50-coco . --build-arg model_url=http://download.tensorflow.org/models/object_detection/faster_rcnn_resnet50_coco_2018_01_28.tar.gz
 wait 
 echo "Docker image built"
 echo " "
@@ -12,5 +12,5 @@ echo "Use \'docker container ls\' to check running dockers"
 echo "Kill containers using \'docker kill [container ID]\'"
 echo " "
 echo "Running docker..."
-docker run -p 8080:8080 -p 8081:8081 ssd-resnet-50-fpn-coco
+docker run -p 8080:8080 -p 8081:8081 faster-rcnn-resnet50-coco
 
