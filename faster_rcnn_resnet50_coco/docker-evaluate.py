@@ -26,7 +26,7 @@ box_score = res.json().get('predictions', {})[0].get('detection_scores')
 
 # Declare classes with external txt file
 class_dict = {}
-with open("coco-label.txt") as f:
+with open("../coco-label.txt") as f:
   line = f.readline()
   cnt = 1
   while line:
@@ -40,7 +40,7 @@ width, height = image.size
 
 # Create a colour palette for later use
 colour_list = []
-with open('colour_list.json') as json_file:
+with open('../colour_list.json') as json_file:
   data = json.load(json_file)
   for e in data:
     rgb_dict = e.get('rgb', {})
