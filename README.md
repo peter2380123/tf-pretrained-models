@@ -1,7 +1,7 @@
 ## Installation
 For complete steps, see [Tensorflow's Object Detection Installation Guide](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md)
 
-No additional package installation required (not even Tensorflow, ot at least so far). 
+No additional package installation required (not even Tensorflow, or at least so far). 
 
 ## Quick Start
 Run the 'start-docker' shell script and let it do magic. 
