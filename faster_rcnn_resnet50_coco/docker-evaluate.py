@@ -1,3 +1,13 @@
+"""
+
+Run this script after starting 'start-docker'. 
+
+This python script evaluates the input image and draw a bounding box
+around detected objects. No textual output can be seen, though. For 
+text-like output, see 'simple-docker-evaluate.py'.
+
+"""
+
 import PIL.Image
 import numpy
 import requests
@@ -9,7 +19,7 @@ import matplotlib.pyplot as plt
 import json
 import sys
 
-image = PIL.Image.open("../../images/city.jpg")  # Change dog.jpg with your image
+image = PIL.Image.open("../../images/dog.jpg")  # Change dog.jpg with your image
 image_np = numpy.array(image)
 
 
@@ -19,7 +29,7 @@ res = requests.post("http://localhost:8080/v1/models/default:predict", json=payl
 print(f"Took {time.perf_counter()-start:.2f}s")
 #display(PIL.Image.fromarray(image_np))
 
-# Retrive data from response
+# Retrieve data from response
 box_data = res.json().get('predictions', {})[0].get('detection_boxes')
 box_label = res.json().get('predictions', {})[0].get('detection_classes')
 box_score = res.json().get('predictions', {})[0].get('detection_scores')
@@ -58,8 +68,16 @@ def drawBoxes(img, data):
     # Exclude boxes of 0's
     if(y1==0 and x1==0 and y2==0 and x2==0):
       continue
+    
+    #!! ALTERS TRUTH starts. REMOVE AFTER TESTING AND UNCOMMENT LINE 86.
+    score = box_score[box_index] 
+    if(score < 0.7):
+      continue
+    #!! Truth altering block ends
 
-    print(box) # sanity check, should see no 0-only boxes
+    print([y1, x1, y2-y1, x2-x1]) # Turns x,y coords to COCO bbox format
+    # COCO format in our case is [y-top left, x-top left, height, width]
+    # Could this cause incorrect indexing when doing cocoEval? Try check AP. 
 
     # Loop back colour index if more boxes than palette
     if(colour_index > len(colour_list)-1):
@@ -67,7 +85,7 @@ def drawBoxes(img, data):
     
     cv2.rectangle(img, (x1,y1), (x2,y2), colour_list[colour_index], 3)
     label = class_dict.get(box_label[box_index]) # get label from earlier created dictionary
-    score = box_score[box_index]
+    #score = box_score[box_index]
     label = label + " %.3f"%score
     print(label) # report for label type
     cv2.putText(img, label, (x1, y1 - 12), 0, 1.7e-3 * height, colour_list[colour_index], 2) # writes label to image
