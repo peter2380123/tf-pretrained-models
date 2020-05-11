@@ -25,7 +25,7 @@ dir_list = natsorted(os.listdir(img_dir))
 
 start = time.perf_counter()
 
-for image_id, img_path in enumerate(dir_list, start=0):
+for image_id, img_path in enumerate(dir_list, start=1): # start ID'ing from 1 to comply with file names
   if(image_id >= 10):
     break
   print(f"image_id: {image_id:d}") # print image id as sanity check
@@ -62,7 +62,7 @@ for image_id, img_path in enumerate(dir_list, start=0):
     y1, x1, y2, x2 = (int(box[0]*height), int(box[1]*width), int(box[2]*height), int(box[3]*width)) # get x y coords for each box
 
     
-    new_dict = {"image_id":image_id,"category_id":count,"bbox":[y1, x1, y2-y1, x2-x1],"score":box_score[count]}
+    new_dict = {"image_id":image_id,"category_id":box_label[count],"bbox":[y1, x1, y2-y1, x2-x1],"score":box_score[count]}
     
     result_dict.append(new_dict)
 
