@@ -20,17 +20,20 @@ from natsort import natsorted
 from multiprocessing import Pool
 
 img_dir = "../../driving-in-the-matrix-images/repro-10k-images/VOC2012/JPEGImages/"
-result_dict = []
 dir_list = natsorted(os.listdir(img_dir))
 
 start = time.perf_counter()
 
-for image_id, img_path in enumerate(dir_list, start=1): # start ID'ing from 1 to comply with file names
-  if(image_id >= 10):
-    break
-  print(f"image_id: {image_id:d}") # print image id as sanity check
+#for image_id, img_path in enumerate(dir_list, start=1):
+  
+  #if(image_id >= 10):
+    #break
+  #print(f"image_id: {image_id:d}") # print image id as sanity check
+  
+def process_image(name):
+  result_dict = []
 
-  input_path = os.path.join(img_dir, img_path)
+  input_path = os.path.join(img_dir, name)
 
   image = PIL.Image.open(input_path)  # Change dog.jpg with your image
   image_np = numpy.array(image)
@@ -61,18 +64,25 @@ for image_id, img_path in enumerate(dir_list, start=1): # start ID'ing from 1 to
     #y1, x1, y2, x2 = box[0], box[1], box[2], box[3] # get x y coords for each box
     y1, x1, y2, x2 = (int(box[0]*height), int(box[1]*width), int(box[2]*height), int(box[3]*width)) # get x y coords for each box
 
-    
-    new_dict = {"image_id":image_id,"category_id":box_label[count],"bbox":[y1, x1, y2-y1, x2-x1],"score":box_score[count]}
+    new_dict = {"image_id":int(name.split('.')[0]),"category_id":box_label[count],"bbox":[y1, x1, y2-y1, x2-x1],"score":box_score[count]}
     
     result_dict.append(new_dict)
 
-print(result_dict) # print result as sanity check 
+
+  if len(result_dict) is not 0:
+    print(result_dict) # print result as sanity check 
+    return result_dict
+
+pool = Pool()
+result = [x for x in pool.map(process_image, dir_list) if x is not None for x in x]
+
+pool.close()
+pool.join()
 
 print(f"Whole process took {time.perf_counter()-start:.2f}s")
 
-#import sys
-#sys.exit()
+print(result)
 
 # write result to json
-with open("results/test-slow-10-imgs.json", 'w') as outfile:
-  json.dump(result_dict, outfile)
+with open("results/multiprocess-10k-imgs.json", 'w') as outfile:
+  json.dump(result, outfile)
